@@ -1,16 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="./src/styles/index.css" />
-    <title>Project Planner</title>
-  </head>
-  <body>
-    <div class="app">
-      <div class="active"></div>
-      <div class="finished"></div>
-    </div>
-    <script type="module" src="./src/scripts/index.ts"></script>
-  </body>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="./src/styles/index.css" />
+		<title>Project Planner</title>
+	</head>
+
+	<body>
+		<div class="app">
+			<div class="app__title">Project Planner</div>
+			<div class="projects-list" id="active-projects">
+				<div class="projects-list__header">
+					<div class="projects-list__title">Active Projects</div>
+					<button class="projects-list__add-button">+</button>
+				</div>
+				<div class="projects-list__content"></div>
+			</div>
+			<div class="projects-list" id="finished-projects">
+				<div class="projects-list__header">
+					<div class="projects-list__title">Finished Projects</div>
+					<button class="projects-list__add-button">+</button>
+				</div>
+				<div class="projects-list__content"></div>
+			</div>
+			<div class="new-project-modal" id="new-project-modal">
+				<div class="new-project-modal__background"></div>
+				<form class="new-project-modal__form">
+					<label for="new-project-modal__title-input" class="new-project-modal__title-lable">Title:</label>
+					<input
+						type="text"
+						class="new-project-modal__title-input"
+						id="new-project-modal__title-input"
+						placeholder="Enter project title here..."
+						spellcheck="false"
+						autocomplete="off"
+						required
+					/>
+					<label for="new-project-modal__description-input" class="new-project-modal__description-lable"
+						>Description:</label
+					>
+					<input
+						type="text"
+						class="new-project-modal__description-input"
+						id="new-project-modal__description-input"
+						placeholder="Enter project description here..."
+						autocomplete="off"
+						required
+					/>
+					<label for="new-project-modal__info-textarea" class="new-project-modal__info-label"
+						>Additional info:</label
+					>
+					<textarea
+						name="info"
+						class="new-project-modal__info-textarea"
+						id="new-project-modal__info-textarea"
+						placeholder="Provide any additional info about project if you wish..."
+						cols="30"
+						rows="10"
+						autocomplete="off"
+					></textarea>
+					<div class="new-project-modal__buttons-container">
+						<button type="button" class="new-project-modal__cancel-button">Cancel</button>
+						<button type="submit" class="new-project-modal__submit-button">Add Project</button>
+					</div>
+				</form>
+			</div>
+		</div>
+		<script type="module" src="./src/scripts/index.ts"></script>
+	</body>
 </html>

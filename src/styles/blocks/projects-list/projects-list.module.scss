@@ -1,0 +1,39 @@
+.projects-list {
+	margin: 40px 0px;
+	width: 90%;
+
+	&__header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 10px;
+	}
+
+	&__title {
+		font-size: 20px;
+		font-weight: 700;
+		color: white;
+	}
+
+	&__add-button {
+		font-size: 20px;
+		font-weight: 700;
+		color: white;
+	}
+
+	&__content {
+		min-height: 60px;
+		background-color: white;
+	}
+}
+
+// temporary
+#active-projects {
+	border: 1px solid $purple;
+	background-color: $purple;
+}
+
+#finished-projects {
+	border: 1px solid $grey-dark;
+	background-color: $grey-dark;
+}

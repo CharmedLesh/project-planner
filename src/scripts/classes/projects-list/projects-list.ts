@@ -6,6 +6,11 @@ export class ProjectsList {
 	localStorage: LocalStorage<IProject[]>;
 	projectsInstancesArray: Project[];
 
+	constructor({ status, key }: { status: 'active' | 'finished'; key: string }) {
+		this.localStorage = new LocalStorage<IProject[]>({ key });
+		this.projectsInstancesArray = this.initProjectsInstancesArray(status);
+	}
+
 	private initProjectsInstancesArray = (status: 'active' | 'finished'): Project[] => {
 		const projectsFromLocalStorage: IProject[] | null = this.localStorage.get();
 		if (projectsFromLocalStorage) {
@@ -29,8 +34,7 @@ export class ProjectsList {
 		return [];
 	};
 
-	constructor({ status, key }: { status: 'active' | 'finished'; key: string }) {
-		this.localStorage = new LocalStorage<IProject[]>({ key });
-		this.projectsInstancesArray = this.initProjectsInstancesArray(status);
-	}
+	// addNewProject = () => {
+	// 	console.log('add new project method');
+	// };
 }
