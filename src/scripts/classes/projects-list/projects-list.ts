@@ -34,7 +34,7 @@ export class ProjectsList {
 		return [];
 	};
 
-	// addNewProject = () => {
-	// 	console.log('add new project method');
-	// };
+	addNewProject = (projectData: IProject) => {
+		console.log(projectData.status, projectData.title, projectData.description, projectData.info);
+	};
 }

@@ -1,5 +1,5 @@
 export interface IProject {
-	id: string;
+	id?: string;
 	status: 'active' | 'finished';
 	title: string;
 	description: string;
