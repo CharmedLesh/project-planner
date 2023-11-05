@@ -34,7 +34,23 @@ export class ProjectsList {
 		return [];
 	};
 
+	private addNewProjectToLocalStorage = (newProject: Project) => {
+		const projects: IProject[] | null = this.localStorage.get();
+		if (projects) {
+			projects.push(newProject);
+			this.localStorage.set(projects);
+		} else {
+			this.localStorage.set([newProject]);
+		}
+	};
+
 	addNewProject = (projectData: IProject) => {
-		console.log(projectData.status, projectData.title, projectData.description, projectData.info);
+		const newProject: Project = new Project({
+			status: projectData.status,
+			title: projectData.title,
+			description: projectData.description,
+			info: projectData.info
+		});
+		this.addNewProjectToLocalStorage(newProject);
 	};
 }

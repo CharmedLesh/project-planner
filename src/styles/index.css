@@ -270,6 +270,27 @@ textarea {
 .new-project-modal textarea:focus::placeholder {
   color: transparent;
 }
+.new-project-modal input[type=radio] {
+  display: none;
+  margin: 10px;
+}
+.new-project-modal input[type=radio] + label {
+  display: inline-block;
+  margin: 1px;
+  padding: 5px 15px;
+  background-color: #e7e7e7;
+  border-color: #ddd;
+  cursor: pointer;
+}
+.new-project-modal input[type=radio]:checked + label {
+  background-image: none;
+  outline: 1px solid #ff0062;
+}
+.new-project-modal__project-type-radio-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+}
 .new-project-modal__buttons-container {
   display: flex;
   justify-content: space-between;

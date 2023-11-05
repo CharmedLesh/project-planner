@@ -20,60 +20,57 @@ const $cancelNewProjectModalButton = $newProjectModal?.querySelector(
 ) as HTMLButtonElement | null;
 const $newProjectModalForm = $newProjectModal?.querySelector('.new-project-modal__form') as HTMLFormElement | null;
 
-const addNewProjectButtonCickHandler = (status: 'active' | 'finished') => {
+document.addEventListener('click', (e: any) => {
+	const $target = e.target;
+
+	if ($target) {
+		if ($target === $addActiveProjectButton || $target === $addFinishedProjectButton) {
+			addNewProjectButtonClickHandler();
+		}
+	}
+});
+
+const addNewProjectButtonClickHandler = () => {
 	if ($newProjectModal) {
 		$newProjectModal.style.display = 'flex';
-		$cancelNewProjectModalButton?.addEventListener('click', cancelNewProjectModalButtonClickHandler);
-		$newProjectModalForm?.addEventListener('submit', event => submitNewProjectModalFormHandler(event, status));
 	}
+	$cancelNewProjectModalButton?.addEventListener('click', cancelNewProjectModalButtonClickHandler);
+	$newProjectModalForm?.addEventListener('submit', submitNewProjectModalFormHandler);
 };
 
 const cancelNewProjectModalButtonClickHandler = () => {
 	if ($newProjectModal) {
 		$newProjectModal.style.display = 'none';
+		$newProjectModalForm?.reset();
 	}
 	$cancelNewProjectModalButton?.removeEventListener('click', cancelNewProjectModalButtonClickHandler);
+	$newProjectModalForm?.removeEventListener('submit', submitNewProjectModalFormHandler);
 };
 
-const submitNewProjectModalFormHandler = (event: SubmitEvent, status: 'active' | 'finished') => {
+const submitNewProjectModalFormHandler = (event: SubmitEvent) => {
 	event.preventDefault();
-	const $target = event.target as HTMLFormElement | null;
-	if ($target) {
-		const formData = new FormData($target);
-		const formValues = Object.fromEntries(formData);
-		const projectData: IProject = {
-			status: status,
-			title: formValues.title as string,
-			description: formValues.description as string,
-			info: formValues.info as string
-		};
-
-		switch (status) {
-			case 'active':
-				activeProjectsList.addNewProject(projectData);
-				break;
-			case 'finished':
-				finishedProjectsList.addNewProject(projectData);
-				break;
-			default:
-				console.error('Status argument error.');
-		}
-
-		$target.reset();
-	}
+	const $target = event.target as HTMLFormElement;
+	const formData = new FormData($target);
+	const formValues = Object.fromEntries(formData);
+	const projectData: IProject = {
+		status: formValues.status as 'active' | 'finished',
+		title: formValues.title as string,
+		description: formValues.description as string,
+		info: formValues.info as string
+	};
+	addNewProject(projectData);
+	cancelNewProjectModalButtonClickHandler();
 };
 
-document.addEventListener('click', (e: any) => {
-	const $target = e.target;
-
-	if ($target) {
-		// target is add active project button
-		if ($target === $addActiveProjectButton) {
-			addNewProjectButtonCickHandler('active');
-		}
-		// target is add finished project button
-		if ($target === $addFinishedProjectButton) {
-			addNewProjectButtonCickHandler('finished');
-		}
+const addNewProject = (projectData: IProject) => {
+	switch (projectData.status) {
+		case 'active':
+			activeProjectsList.addNewProject(projectData);
+			break;
+		case 'finished':
+			finishedProjectsList.addNewProject(projectData);
+			break;
+		default:
+			console.error('Status argument error.');
 	}
-});
+};

@@ -53,6 +53,31 @@
 		}
 	}
 
+	input[type='radio'] {
+		display: none;
+		margin: 10px;
+	}
+
+	input[type='radio'] + label {
+		display: inline-block;
+		margin: 1px;
+		padding: 5px 15px;
+		background-color: #e7e7e7;
+		border-color: #ddd;
+		cursor: pointer;
+	}
+
+	input[type='radio']:checked + label {
+		background-image: none;
+		outline: 1px solid $red;
+	}
+
+	&__project-type-radio-container {
+		display: flex;
+		justify-content: center;
+		margin-bottom: 10px;
+	}
+
 	&__buttons-container {
 		display: flex;
 		justify-content: space-between;

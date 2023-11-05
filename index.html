@@ -27,6 +27,25 @@
 			<div class="new-project-modal" id="new-project-modal">
 				<div class="new-project-modal__background"></div>
 				<form class="new-project-modal__form">
+					<div class="new-project-modal__project-type-radio-container">
+						<input
+							type="radio"
+							class="new-project-modal__project-type-radio"
+							id="new-project-modal__project-type-radio--active"
+							name="status"
+							value="active"
+							checked
+						/>
+						<label for="new-project-modal__project-type-radio--active">Active Project</label>
+						<input
+							type="radio"
+							class="new-project-modal__project-type-radio"
+							id="new-project-modal__project-type-radio--finished"
+							name="status"
+							value="finished"
+						/>
+						<label for="new-project-modal__project-type-radio--finished">Finished Project</label>
+					</div>
 					<label for="new-project-modal__title-input" class="new-project-modal__title-lable">Title:</label>
 					<input
 						name="title"
