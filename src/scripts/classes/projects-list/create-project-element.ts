@@ -9,18 +9,18 @@ export class CreateProjectElement {
 
 	createProjectElement = (): HTMLLIElement => {
 		const projectActionButtonInnerText = this.projectData.status === 'active' ? 'Finish' : 'Activate';
-		const $project = this.createLi('project');
-		const $projectTitle = this.createH2('project__title', undefined, this.projectData.title);
-		const $projectDescription = this.createP('project__description', undefined, this.projectData.description);
-		const $projectButtonsContainer = this.createDiv('project__buttons-container', undefined, undefined);
+		const $project = this.createLi('js-project', this.projectData.id);
+		const $projectTitle = this.createH2('js-project__title', undefined, this.projectData.title);
+		const $projectDescription = this.createP('js-project__description', undefined, this.projectData.description);
+		const $projectButtonsContainer = this.createDiv('js-project__buttons-container', undefined, undefined);
 		const $projectMoreInfoButton = this.createButton(
-			['project__more-info-button', 'outlined-red-button'],
+			['js-project__more-info-button', 'outlined-red-button'],
 			undefined,
 			'More Info',
 			undefined
 		);
 		const $projectActionButton = this.createButton(
-			['project__action-button', 'filled-red-button'],
+			['js-project__action-button', 'filled-red-button'],
 			undefined,
 			projectActionButtonInnerText,
 			undefined
@@ -32,10 +32,13 @@ export class CreateProjectElement {
 		return $project;
 	};
 
-	private createLi(classNameOrClassNamesArray?: string | string[]): HTMLLIElement {
+	private createLi(classNameOrClassNamesArray?: string | string[], dataId?: string): HTMLLIElement {
 		const $li = document.createElement('li');
 		if (classNameOrClassNamesArray) {
 			this.addToClassNameList(classNameOrClassNamesArray, $li);
+		}
+		if (dataId) {
+			$li.setAttribute('data-id', dataId);
 		}
 		return $li;
 	}

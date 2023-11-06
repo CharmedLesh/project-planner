@@ -10,17 +10,19 @@ export class Project {
 	info: string;
 
 	constructor({
+		id,
 		status,
 		title,
 		description,
 		info
 	}: {
+		id?: string;
 		status: 'active' | 'finished';
 		title: string;
 		description: string;
 		info: string;
 	}) {
-		this.id = uuidv4();
+		this.id = id ? id : uuidv4();
 		this.title = title;
 		this.status = status;
 		this.description = description;

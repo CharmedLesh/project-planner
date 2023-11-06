@@ -33,6 +33,7 @@ export class ProjectsList {
 				let projectsInstancesArray: Project[] = [];
 				for (const project of projectsFromLocalStorageFilteredByStatus) {
 					const projectInstance: Project = new Project({
+						id: project.id,
 						status: project.status,
 						title: project.title,
 						description: project.description,

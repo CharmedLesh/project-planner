@@ -1,3 +1,4 @@
+import { LocalStorage } from './classes/common/local-storage';
 import { ProjectsList } from './classes/projects-list/projects-list';
 import { IProject } from './interfaces/interfaces';
 
@@ -20,17 +21,7 @@ const $cancelNewProjectModalButton = $newProjectModal?.querySelector(
 ) as HTMLButtonElement | null;
 const $newProjectModalForm = $newProjectModal?.querySelector('.new-project-modal__form') as HTMLFormElement | null;
 
-document.addEventListener('click', (e: any) => {
-	const $target = e.target;
-
-	if ($target) {
-		if ($target === $addActiveProjectButton || $target === $addFinishedProjectButton) {
-			addNewProjectButtonClickHandler();
-		}
-	}
-});
-
-const addNewProjectButtonClickHandler = () => {
+const addNewProjectButtonClickHandler = (): void => {
 	if ($newProjectModal) {
 		$newProjectModal.style.display = 'flex';
 	}
@@ -38,7 +29,7 @@ const addNewProjectButtonClickHandler = () => {
 	$newProjectModalForm?.addEventListener('submit', submitNewProjectModalFormHandler);
 };
 
-const cancelNewProjectModalButtonClickHandler = () => {
+const cancelNewProjectModalButtonClickHandler = (): void => {
 	if ($newProjectModal) {
 		$newProjectModal.style.display = 'none';
 		$newProjectModalForm?.reset();
@@ -47,7 +38,7 @@ const cancelNewProjectModalButtonClickHandler = () => {
 	$newProjectModalForm?.removeEventListener('submit', submitNewProjectModalFormHandler);
 };
 
-const submitNewProjectModalFormHandler = (event: SubmitEvent) => {
+const submitNewProjectModalFormHandler = (event: SubmitEvent): void => {
 	event.preventDefault();
 	const $target = event.target as HTMLFormElement;
 	const formData = new FormData($target);
@@ -62,7 +53,7 @@ const submitNewProjectModalFormHandler = (event: SubmitEvent) => {
 	cancelNewProjectModalButtonClickHandler();
 };
 
-const addNewProject = (projectData: IProject) => {
+const addNewProject = (projectData: IProject): void => {
 	switch (projectData.status) {
 		case 'active':
 			activeProjectsList.addNewProject(projectData);
@@ -75,34 +66,51 @@ const addNewProject = (projectData: IProject) => {
 	}
 };
 
-// Your array of objects
-// const projects = [
-// 	{
-// 		id: '1',
-// 		status: 'active',
-// 		title: 'Project 1',
-// 		description: 'Description of Project 1',
-// 		info: 'Info for Project 1'
-// 	},
-// 	{
-// 		id: '2',
-// 		status: 'finished',
-// 		title: 'Project 2',
-// 		description: 'Description of Project 2',
-// 		info: 'Info for Project 2'
-// 	},
-// 	{
-// 		id: '3',
-// 		status: 'active',
-// 		title: 'Project 3',
-// 		description: 'Description of Project 3',
-// 		info: 'Info for Project 3'
-// 	}
-// 	// ... more objects
-// ];
+const changeProjectStatusById = (projects: IProject[], id: string): void => {
+	console.log(projects);
+	const projectToUpdate = projects.find(project => project.id === id);
 
-// // Filtering the array to get objects with status "active"
-// const activeProjects = projects.filter(project => project.status === 'active');
+	if (projectToUpdate) {
+		projectToUpdate.status = projectToUpdate.status === 'active' ? 'finished' : 'active';
+		console.log(projects);
+	} else {
+		console.error(`Project with ID ${id} not found`);
+	}
+};
 
-// console.log(projects);
-// console.log(activeProjects);
+const actionButtonClickHandler = ($target: HTMLButtonElement) => {
+	const $project = $target.closest('.js-project');
+	if ($project) {
+		const projectId: string | null = $project.getAttribute('data-id');
+		if (projectId) {
+			const localStorage = new LocalStorage<IProject[]>({ key: key });
+			const projects = localStorage.get();
+			if (projects) {
+				changeProjectStatusById(projects, projectId);
+				localStorage.set(projects);
+			} else {
+				console.error('Error occured while getting project from localstorage.');
+			}
+		} else {
+			console.error('data-id attribute not found.');
+		}
+	} else {
+		console.error('Project not found');
+	}
+};
+
+document.addEventListener('click', (e: any) => {
+	const $target = e.target;
+
+	if ($target) {
+		// target is add new project button
+		if ($target === $addActiveProjectButton || $target === $addFinishedProjectButton) {
+			addNewProjectButtonClickHandler();
+		}
+
+		//target is action button
+		if ($target.classList.contains('js-project__action-button')) {
+			actionButtonClickHandler($target);
+		}
+	}
+});
