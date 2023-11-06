@@ -86,19 +86,5 @@
 	button {
 		padding: 8px 16px;
 		font-size: 16px;
-
-		&:active {
-			transform: scale(0.95);
-		}
-	}
-
-	&__cancel-button {
-		color: $red;
-		border: 1px solid $red;
-	}
-
-	&__submit-button {
-		background-color: $red;
-		color: white;
 	}
 }

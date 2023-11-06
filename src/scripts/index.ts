@@ -74,3 +74,35 @@ const addNewProject = (projectData: IProject) => {
 			console.error('Status argument error.');
 	}
 };
+
+// Your array of objects
+// const projects = [
+// 	{
+// 		id: '1',
+// 		status: 'active',
+// 		title: 'Project 1',
+// 		description: 'Description of Project 1',
+// 		info: 'Info for Project 1'
+// 	},
+// 	{
+// 		id: '2',
+// 		status: 'finished',
+// 		title: 'Project 2',
+// 		description: 'Description of Project 2',
+// 		info: 'Info for Project 2'
+// 	},
+// 	{
+// 		id: '3',
+// 		status: 'active',
+// 		title: 'Project 3',
+// 		description: 'Description of Project 3',
+// 		info: 'Info for Project 3'
+// 	}
+// 	// ... more objects
+// ];
+
+// // Filtering the array to get objects with status "active"
+// const activeProjects = projects.filter(project => project.status === 'active');
+
+// console.log(projects);
+// console.log(activeProjects);

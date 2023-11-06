@@ -1,8 +1,9 @@
 import { IProject } from '../../interfaces/interfaces';
+import { Project } from './project';
 
 export class CreateProjectElement {
-	projectData: IProject;
-	constructor({ projectData }: { projectData: IProject }) {
+	projectData: IProject | Project;
+	constructor({ projectData }: { projectData: IProject | Project }) {
 		this.projectData = projectData;
 	}
 
@@ -10,16 +11,16 @@ export class CreateProjectElement {
 		const projectActionButtonInnerText = this.projectData.status === 'active' ? 'Finish' : 'Activate';
 		const $project = this.createLi('project');
 		const $projectTitle = this.createH2('project__title', undefined, this.projectData.title);
-		const $projectButtonsContainer = this.createDiv('project__buttons-container', undefined, undefined);
 		const $projectDescription = this.createP('project__description', undefined, this.projectData.description);
+		const $projectButtonsContainer = this.createDiv('project__buttons-container', undefined, undefined);
 		const $projectMoreInfoButton = this.createButton(
-			'project__more-info-button',
+			['project__more-info-button', 'outlined-red-button'],
 			undefined,
 			'More Info',
 			undefined
 		);
 		const $projectActionButton = this.createButton(
-			'project__action-button',
+			['project__action-button', 'filled-red-button'],
 			undefined,
 			projectActionButtonInnerText,
 			undefined

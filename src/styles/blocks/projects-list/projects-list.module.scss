@@ -1,5 +1,5 @@
 .projects-list {
-	margin: 40px 0px;
+	margin: 40px 0px 0px;
 	width: 90%;
 
 	&__header {
@@ -24,6 +24,16 @@
 	&__content {
 		min-height: 60px;
 		background-color: white;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		padding-top: 20px;
+		max-height: 240px;
+		overflow-y: scroll;
+
+		&::-webkit-scrollbar {
+			display: none;
+		}
 	}
 }
 

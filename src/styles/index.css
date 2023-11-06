@@ -103,6 +103,9 @@ button {
   background: none;
   cursor: pointer;
 }
+button:active {
+  transform: scale(0.95);
+}
 
 a {
   text-decoration: none;
@@ -160,11 +163,23 @@ textarea {
   box-sizing: inherit;
 }
 
+.filled-red-button {
+  background-color: #ff0062;
+  border: 1px solid #ff0062;
+  color: white;
+}
+
+.outlined-red-button {
+  color: #ff0062;
+  border: 1px solid #ff0062;
+}
+
 .app {
   width: 600px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 20px;
 }
 .app__title {
   width: 100%;
@@ -179,7 +194,7 @@ textarea {
 }
 
 .projects-list {
-  margin: 40px 0px;
+  margin: 40px 0px 0px;
   width: 90%;
 }
 .projects-list__header {
@@ -201,6 +216,15 @@ textarea {
 .projects-list__content {
   min-height: 60px;
   background-color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 20px;
+  max-height: 240px;
+  overflow-y: scroll;
+}
+.projects-list__content::-webkit-scrollbar {
+  display: none;
 }
 
 #active-projects {
@@ -299,16 +323,29 @@ textarea {
   padding: 8px 16px;
   font-size: 16px;
 }
-.new-project-modal button:active {
-  transform: scale(0.95);
+
+.project {
+  width: 90%;
+  padding: 20px 12px 12px;
+  margin-bottom: 12px;
+  border-radius: 6px;
+  box-shadow: rgba(70, 70, 76, 0.2) 0px 2px 5px 2px;
 }
-.new-project-modal__cancel-button {
-  color: #ff0062;
-  border: 1px solid #ff0062;
+.project__title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 15px;
 }
-.new-project-modal__submit-button {
-  background-color: #ff0062;
-  color: white;
+.project__description {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+.project button {
+  font-size: 14px;
+  padding: 6px 18px;
+}
+.project button:first-child {
+  margin-right: 5px;
 }
 
 body {

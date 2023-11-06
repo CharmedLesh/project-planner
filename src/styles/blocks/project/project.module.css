@@ -1,0 +1,23 @@
+.project {
+  width: 90%;
+  padding: 20px 12px 12px;
+  margin-bottom: 12px;
+  border-radius: 6px;
+  box-shadow: rgba(70, 70, 76, 0.2) 0px 2px 5px 2px;
+}
+.project__title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+.project__description {
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+.project button {
+  font-size: 14px;
+  padding: 6px 18px;
+}
+.project button:first-child {
+  margin-right: 5px;
+}/*# sourceMappingURL=project.module.css.map */

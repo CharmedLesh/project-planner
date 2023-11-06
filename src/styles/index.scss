@@ -2,10 +2,12 @@
 //
 @import './common/variables.scss';
 @import './common/reset.scss';
+@import './common/modifiers/buttons.scss';
 //
 @import './blocks/app/app.module.scss';
 @import './blocks/projects-list/projects-list.module.scss';
 @import './blocks/new-project-modal/new-project-modal.module.scss';
+@import './blocks/project/project.module.scss';
 
 body {
 	margin: 0;
