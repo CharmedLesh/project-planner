@@ -16,4 +16,14 @@
 		align-items: center;
 		justify-content: center;
 	}
+
+	&__active-projects {
+		border: 1px solid $purple;
+		background-color: $purple;
+	}
+
+	&__finished-projects {
+		border: 1px solid $grey-dark;
+		background-color: $grey-dark;
+	}
 }

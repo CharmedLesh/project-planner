@@ -192,6 +192,14 @@ textarea {
   align-items: center;
   justify-content: center;
 }
+.app__active-projects {
+  border: 1px solid #870099;
+  background-color: #870099;
+}
+.app__finished-projects {
+  border: 1px solid #535353;
+  background-color: #535353;
+}
 
 .projects-list {
   margin: 40px 0px 0px;
@@ -225,16 +233,6 @@ textarea {
 }
 .projects-list__content::-webkit-scrollbar {
   display: none;
-}
-
-#active-projects {
-  border: 1px solid #870099;
-  background-color: #870099;
-}
-
-#finished-projects {
-  border: 1px solid #535353;
-  background-color: #535353;
 }
 
 .new-project-modal {
