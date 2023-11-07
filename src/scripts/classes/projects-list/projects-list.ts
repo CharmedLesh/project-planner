@@ -49,7 +49,7 @@ export class ProjectsList {
 		return [];
 	};
 
-	private invokeRerender = () => {
+	private invokeRerender = (): void => {
 		const projectsListElementsArray = this.createProjectElement.createProjectsElementsArray(
 			this.projectsInstancesArray
 		);
@@ -58,7 +58,7 @@ export class ProjectsList {
 		}
 	};
 
-	addNewProject = (projectData: IProject) => {
+	addNewProject = (projectData: IProject): void => {
 		const newProject: Project = new Project({
 			id: projectData.id,
 			status: projectData.status,
@@ -71,11 +71,16 @@ export class ProjectsList {
 		this.render.renderProject($project);
 	};
 
-	removeProjectById = (id: ID) => {
+	removeProjectById = (id: ID): void => {
 		// remove project from instances array
 		const indexToRemove: number = this.projectsInstancesArray.findIndex(project => project.id === id);
 		this.projectsInstancesArray.splice(indexToRemove, 1);
 		// unrender project
 		this.render.unrenderProjectById(id);
+	};
+
+	getProjectById = (id: ID): Project | null => {
+		const project = this.projectsInstancesArray.find(project => project.id === id);
+		return project ? project : null;
 	};
 }

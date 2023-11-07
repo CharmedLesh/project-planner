@@ -25,8 +25,8 @@
 				<ul class="projects-list__content"></ul>
 			</div>
 			<div class="new-project-modal" id="new-project-modal">
-				<div class="new-project-modal__background"></div>
-				<form class="new-project-modal__form">
+				<div class="new-project-modal__background modal-background"></div>
+				<form class="new-project-modal__form modal-container">
 					<div class="new-project-modal__project-type-radio-container">
 						<input
 							type="radio"
@@ -90,6 +90,18 @@
 						</button>
 					</div>
 				</form>
+			</div>
+			<div class="more-info-modal" id="more-info-modal">
+				<div class="more-info-modal__background modal-background"></div>
+				<div class="more-info-modal__container modal-container">
+					<h2 class="more-info-modal__title"></h2>
+					<p class="more-info-modal__description"></p>
+					<p class="more-info-modal__info"></p>
+					<div class="more-info-modal__buttons-container">
+						<button class="more-info-modal__delete-button outlined-red-button">Delete Project</button>
+						<button class="more-info-modal__close-button filled-red-button">Close</button>
+					</div>
+				</div>
 			</div>
 		</div>
 		<script type="module" src="./src/scripts/index.ts"></script>

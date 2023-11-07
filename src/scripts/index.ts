@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { LocalStorage } from './classes/common/local-storage';
 import { ProjectsList } from './classes/projects-list/projects-list';
 import { IProject } from './interfaces/interfaces';
+import { Project } from './classes/projects-list/project';
 
 type ID = string;
 
@@ -20,6 +21,7 @@ const finishedProjectsList: ProjectsList = new ProjectsList({
 });
 
 // elements
+// project lists
 const $activeProjects = document.getElementById('active-projects') as HTMLDivElement | null;
 const $addActiveProjectButton = $activeProjects?.querySelector(
 	'.projects-list__add-button'
@@ -28,12 +30,25 @@ const $finishedProjects = document.getElementById('finished-projects') as HTMLDi
 const $addFinishedProjectButton = $finishedProjects?.querySelector(
 	'.projects-list__add-button'
 ) as HTMLButtonElement | null;
-
+// add new project modal
 const $newProjectModal = document.getElementById('new-project-modal') as HTMLDivElement | null;
 const $cancelNewProjectModalButton = $newProjectModal?.querySelector(
 	'.new-project-modal__cancel-button'
 ) as HTMLButtonElement | null;
 const $newProjectModalForm = $newProjectModal?.querySelector('.new-project-modal__form') as HTMLFormElement | null;
+// more info modal
+const $moreInfoModal = document.getElementById('more-info-modal') as HTMLDivElement | null;
+const $moreInfoModalTitle = $moreInfoModal?.querySelector('.more-info-modal__title') as HTMLParagraphElement | null;
+const $moreInfoModalDescription = $moreInfoModal?.querySelector(
+	'.more-info-modal__description'
+) as HTMLParagraphElement | null;
+const $moreInfoModalInfo = $moreInfoModal?.querySelector('.more-info-modal__info') as HTMLParagraphElement | null;
+const $moreInfoModalDeleteButton = $moreInfoModal?.querySelector(
+	'.more-info-modal__delete-button'
+) as HTMLButtonElement | null;
+const $moreInfoModalCloseButton = $moreInfoModal?.querySelector(
+	'.more-info-modal__close-button'
+) as HTMLButtonElement | null;
 
 // helpers
 const addNewProject = (projectData: IProject): void => {
@@ -72,22 +87,22 @@ const addProjectToAppropriateList = (project: IProject) => {
 // handlers
 const addNewProjectButtonClickHandler = (): void => {
 	if ($newProjectModal) {
+		$cancelNewProjectModalButton?.addEventListener('click', cancelNewProjectModalButtonClickHandler);
+		$newProjectModalForm?.addEventListener('submit', newProjectModalSubmitFormHandler);
 		$newProjectModal.style.display = 'flex';
 	}
-	$cancelNewProjectModalButton?.addEventListener('click', cancelNewProjectModalButtonClickHandler);
-	$newProjectModalForm?.addEventListener('submit', submitNewProjectModalFormHandler);
 };
 
 const cancelNewProjectModalButtonClickHandler = (): void => {
 	if ($newProjectModal) {
 		$newProjectModal.style.display = 'none';
+		$cancelNewProjectModalButton?.removeEventListener('click', cancelNewProjectModalButtonClickHandler);
+		$newProjectModalForm?.removeEventListener('submit', newProjectModalSubmitFormHandler);
 		$newProjectModalForm?.reset();
 	}
-	$cancelNewProjectModalButton?.removeEventListener('click', cancelNewProjectModalButtonClickHandler);
-	$newProjectModalForm?.removeEventListener('submit', submitNewProjectModalFormHandler);
 };
 
-const submitNewProjectModalFormHandler = (event: SubmitEvent): void => {
+const newProjectModalSubmitFormHandler = (event: SubmitEvent): void => {
 	event.preventDefault();
 	const $target = event.target as HTMLFormElement;
 	const formData = new FormData($target);
@@ -107,12 +122,12 @@ const actionButtonClickHandler = ($target: HTMLButtonElement): void => {
 	const $project: HTMLLIElement | null = $target.closest('.js-project');
 	if ($project) {
 		// get project id
-		const projectId: string | null = $project.getAttribute('data-id');
+		const id: ID | null = $project.getAttribute('data-id');
 		// get projects from localstorage
 		const projects: IProject[] | null = localStorage.get();
-		if (projectId && projects) {
+		if (id && projects) {
 			// update projects
-			const indexToMove = projects.findIndex(project => project.id === projectId);
+			const indexToMove = projects.findIndex(project => project.id === id);
 			if (indexToMove !== -1) {
 				const [project] = projects.splice(indexToMove, 1);
 				project.status = project.status === 'active' ? 'finished' : 'active';
@@ -120,11 +135,54 @@ const actionButtonClickHandler = ($target: HTMLButtonElement): void => {
 				// set updated projects to localstorage
 				localStorage.set(projects);
 				// remove project from appropriate list
-				removeProjectFromAppropriateList(project.status, projectId);
+				removeProjectFromAppropriateList(project.status, id);
 				// add project to appropriate list
 				addProjectToAppropriateList(project);
 			}
 		}
+	}
+};
+
+const moreInfoClickHandler = ($target: HTMLButtonElement): void => {
+	const $project: HTMLLIElement | null = $target.closest('.js-project');
+	if ($project) {
+		// get project id
+		const id: ID | null = $project.getAttribute('data-id');
+		if (id) {
+			// get project status
+			const $projectList: HTMLDivElement | null = $project.closest('.projects-list');
+			const status: 'active' | 'finished' = $projectList?.id === 'active-projects' ? 'active' : 'finished';
+			// get project data from appropriate list
+			const project: Project | null =
+				status === 'active' ? activeProjectsList.getProjectById(id) : finishedProjectsList.getProjectById(id);
+			if (project) {
+				if ($moreInfoModal && $moreInfoModalTitle && $moreInfoModalDescription && $moreInfoModalInfo) {
+					// fill modal with project data
+					$moreInfoModalTitle.innerText = project.title;
+					$moreInfoModalDescription.innerText = project.description;
+					$moreInfoModalInfo.innerText = project.info;
+					// apply event listeners to buttons inside modal
+					$moreInfoModalCloseButton?.addEventListener('click', closeMoreInfoModalClickHandler);
+					// show more info modal filled with new data
+					$moreInfoModal.style.display = 'flex';
+				} else {
+					console.error('Modal element not found.');
+				}
+			} else {
+				console.error(`Project instance for id ${id} not found.`);
+			}
+		} else {
+			console.error('data-id attribute not found.');
+		}
+	} else {
+		console.error('Project element not found.');
+	}
+};
+
+const closeMoreInfoModalClickHandler = (): void => {
+	if ($moreInfoModal) {
+		$moreInfoModal.style.display = 'none';
+		$moreInfoModalCloseButton?.removeEventListener('click', closeMoreInfoModalClickHandler);
 	}
 };
 
@@ -141,6 +199,11 @@ document.addEventListener('click', (e: any) => {
 		//target is action button
 		if ($target.classList.contains('js-project__action-button')) {
 			actionButtonClickHandler($target);
+		}
+
+		// target is more info button
+		if ($target.classList.contains('js-project__more-info-button')) {
+			moreInfoClickHandler($target);
 		}
 	}
 });

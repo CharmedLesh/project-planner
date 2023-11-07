@@ -174,6 +174,22 @@ textarea {
   border: 1px solid #ff0062;
 }
 
+.modal-background {
+  background-color: rgb(157, 157, 157);
+  opacity: 80%;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+
+.modal-container {
+  display: flex;
+  flex-direction: column;
+  padding: 40px;
+  background-color: white;
+  z-index: 10;
+}
+
 .app {
   width: 600px;
   display: flex;
@@ -246,20 +262,8 @@ textarea {
   justify-content: center;
   display: none;
 }
-.new-project-modal__background {
-  background-color: rgb(157, 157, 157);
-  opacity: 80%;
-  width: 100%;
-  height: 100%;
-  position: absolute;
-}
 .new-project-modal__form {
   width: 600px;
-  display: flex;
-  flex-direction: column;
-  padding: 40px;
-  background-color: white;
-  z-index: 10;
 }
 .new-project-modal label {
   font-size: 18px;
@@ -318,6 +322,41 @@ textarea {
   justify-content: space-between;
 }
 .new-project-modal button {
+  padding: 8px 16px;
+  font-size: 16px;
+}
+
+.more-info-modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100vw;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+  display: none;
+}
+.more-info-modal__container {
+  width: 600px;
+}
+.more-info-modal h2 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.more-info-modal p {
+  margin-top: 10px;
+}
+.more-info-modal__info {
+  font-size: 16px;
+}
+.more-info-modal__buttons-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+.more-info-modal button {
   padding: 8px 16px;
   font-size: 16px;
 }
