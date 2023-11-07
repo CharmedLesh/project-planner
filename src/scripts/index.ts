@@ -3,6 +3,7 @@ import { LocalStorage } from './classes/common/local-storage';
 import { ProjectsList } from './classes/projects-list/projects-list';
 import { IProject } from './interfaces/interfaces';
 import { Project } from './classes/projects-list/project';
+import { Logger } from './classes/common/logger';
 
 type ID = string;
 
@@ -62,7 +63,7 @@ const addNewProject = (projectData: IProject): void => {
 			finishedProjectsList.addNewProject(projectData);
 			break;
 		default:
-			console.error('Status argument error.');
+			Logger.logError('Status argument error.');
 	}
 };
 
@@ -86,19 +87,33 @@ const addProjectToAppropriateList = (project: IProject) => {
 
 // handlers
 const addNewProjectButtonClickHandler = (): void => {
-	if ($newProjectModal) {
+	try {
+		if (!$newProjectModal) {
+			throw new Error('new-project-modal element not found');
+		}
 		$cancelNewProjectModalButton?.addEventListener('click', cancelNewProjectModalButtonClickHandler);
 		$newProjectModalForm?.addEventListener('submit', newProjectModalSubmitFormHandler);
 		$newProjectModal.style.display = 'flex';
+	} catch (error) {
+		if (error instanceof Error) {
+			Logger.logError(error.message);
+		}
 	}
 };
 
 const cancelNewProjectModalButtonClickHandler = (): void => {
-	if ($newProjectModal) {
+	try {
+		if (!$newProjectModal) {
+			throw new Error('new-project-modal element not found');
+		}
 		$newProjectModal.style.display = 'none';
 		$cancelNewProjectModalButton?.removeEventListener('click', cancelNewProjectModalButtonClickHandler);
 		$newProjectModalForm?.removeEventListener('submit', newProjectModalSubmitFormHandler);
 		$newProjectModalForm?.reset();
+	} catch (error) {
+		if (error instanceof Error) {
+			Logger.logError(error.message);
+		}
 	}
 };
 
@@ -119,77 +134,96 @@ const newProjectModalSubmitFormHandler = (event: SubmitEvent): void => {
 };
 
 const actionButtonClickHandler = ($target: HTMLButtonElement): void => {
-	const $project: HTMLLIElement | null = $target.closest('.js-project');
-	if ($project) {
+	try {
+		const $project: HTMLLIElement | null = $target.closest('.js-project');
+		if (!$project) {
+			throw new Error('Project element not found.');
+		}
 		// get project id
 		const id: ID | null = $project.getAttribute('data-id');
+		if (!id) {
+			throw new Error('data-id attribute not found.');
+		}
 		// get projects from localstorage
 		const projects: IProject[] | null = localStorage.get();
-		if (id && projects) {
-			// update projects
-			const indexToMove = projects.findIndex(project => project.id === id);
-			if (indexToMove !== -1) {
-				const [project] = projects.splice(indexToMove, 1);
-				project.status = project.status === 'active' ? 'finished' : 'active';
-				projects.push(project);
-				// set updated projects to localstorage
-				localStorage.set(projects);
-				// remove project from appropriate list
-				removeProjectFromAppropriateList(project.status === 'active' ? 'finished' : 'active', id);
-				// add project to appropriate list
-				addProjectToAppropriateList(project);
-			}
+		if (!projects) {
+			throw new Error('Projects not found in localstorage.');
+		}
+		// update projects
+		const indexToMove = projects.findIndex(project => project.id === id);
+		if (indexToMove === -1) {
+			throw new Error(`Project with id ${id} not found in localstorage.`);
+		}
+		const [project] = projects.splice(indexToMove, 1);
+		project.status = project.status === 'active' ? 'finished' : 'active';
+		projects.push(project);
+		// set updated projects to localstorage
+		localStorage.set(projects);
+		// remove project from appropriate list
+		removeProjectFromAppropriateList(project.status === 'active' ? 'finished' : 'active', id);
+		// add project to appropriate list
+		addProjectToAppropriateList(project);
+	} catch (error) {
+		if (error instanceof Error) {
+			Logger.logError(error.message);
 		}
 	}
 };
 
 const moreInfoClickHandler = ($target: HTMLButtonElement): void => {
-	const $project: HTMLLIElement | null = $target.closest('.js-project');
-	if ($project) {
+	try {
+		const $project: HTMLLIElement | null = $target.closest('.js-project');
+		if (!$project) {
+			throw new Error('Project element not found.');
+		}
 		// get project id
 		const id: ID | null = $project.getAttribute('data-id');
-		if (id) {
-			// get project status
-			const $projectList: HTMLDivElement | null = $project.closest('.projects-list');
-			const status: 'active' | 'finished' = $projectList?.id === 'active-projects' ? 'active' : 'finished';
-			// get project data from appropriate list
-			const project: Project | null =
-				status === 'active' ? activeProjectsList.getProjectById(id) : finishedProjectsList.getProjectById(id);
-			if (project) {
-				if ($moreInfoModal && $moreInfoModalTitle && $moreInfoModalDescription && $moreInfoModalInfo) {
-					// fill modal with project data
-					$moreInfoModal.setAttribute('data-id', project.id);
-					$moreInfoModalTitle.innerText = project.title;
-					$moreInfoModalDescription.innerText = project.description;
-					$moreInfoModalInfo.innerText = project.info;
-					// apply event listeners to buttons inside modal
-					const closeHandler = () => closeMoreInfoModalButtonClickHandler(closeHandler, deleteHandler);
-					const deleteHandler = () =>
-						deleteProjectButtonClickHandler(id, status, closeHandler, deleteHandler);
-					$moreInfoModalCloseButton?.addEventListener('click', closeHandler);
-					$moreInfoModalDeleteButton?.addEventListener('click', deleteHandler);
-					// show more info modal filled with new data
-					$moreInfoModal.style.display = 'flex';
-				} else {
-					console.error('Modal element not found.');
-				}
-			} else {
-				console.error(`Project instance for id ${id} not found.`);
-			}
-		} else {
-			console.error('data-id attribute not found.');
+		if (!id) {
+			throw new Error('data-id attribute not found.');
 		}
-	} else {
-		console.error('Project element not found.');
+		// get project status
+		const $projectList: HTMLDivElement | null = $project.closest('.projects-list');
+		const status: 'active' | 'finished' = $projectList?.id === 'active-projects' ? 'active' : 'finished';
+		// get project data from appropriate list
+		const project: Project | null =
+			status === 'active' ? activeProjectsList.getProjectById(id) : finishedProjectsList.getProjectById(id);
+		if (!project) {
+			throw new Error(`Project instance for id ${id} not found.`);
+		}
+		if (!$moreInfoModal || !$moreInfoModalTitle || !$moreInfoModalDescription || !$moreInfoModalInfo) {
+			throw new Error('Modal element not found.');
+		}
+		// fill modal with project data
+		$moreInfoModal.setAttribute('data-id', project.id);
+		$moreInfoModalTitle.innerText = project.title;
+		$moreInfoModalDescription.innerText = project.description;
+		$moreInfoModalInfo.innerText = project.info;
+		// apply event listeners to buttons inside modal
+		const closeHandler = () => closeMoreInfoModalButtonClickHandler(closeHandler, deleteHandler);
+		const deleteHandler = () => deleteProjectButtonClickHandler(id, status, closeHandler, deleteHandler);
+		$moreInfoModalCloseButton?.addEventListener('click', closeHandler);
+		$moreInfoModalDeleteButton?.addEventListener('click', deleteHandler);
+		// show more info modal filled with new data
+		$moreInfoModal.style.display = 'flex';
+	} catch (error) {
+		if (error instanceof Error) {
+			Logger.logError(error.message);
+		}
 	}
 };
 
 function closeMoreInfoModalButtonClickHandler(closeHandler: () => void, deleteHandler: () => void): void {
-	console.log('close handler');
-	if ($moreInfoModal) {
+	try {
+		if (!$moreInfoModal) {
+			throw new Error('more-info-modal element not found.');
+		}
 		$moreInfoModal.style.display = 'none';
 		$moreInfoModalCloseButton?.removeEventListener('click', closeHandler);
 		$moreInfoModalDeleteButton?.removeEventListener('click', deleteHandler);
+	} catch (error) {
+		if (error instanceof Error) {
+			Logger.logError(error.message);
+		}
 	}
 }
 
@@ -199,19 +233,23 @@ function deleteProjectButtonClickHandler(
 	closeHandler: () => void,
 	deleteHandler: () => void
 ): void {
-	console.log('remove handler');
-	// update localstorage
-	const projects: IProject[] | null = localStorage.get();
-	if (projects) {
+	try {
+		const projects: IProject[] | null = localStorage.get();
+		if (!projects) {
+			throw new Error('Projects not found in localstorage.');
+		}
+		// update localstorage
 		const newProjects = projects.filter(project => project.id !== id);
 		localStorage.set(newProjects);
-	} else {
-		console.error('PROJECTS not found.');
+		// remove project instance from appropriate list
+		removeProjectFromAppropriateList(status, id);
+		// close more info modal
+		closeMoreInfoModalButtonClickHandler(closeHandler, deleteHandler);
+	} catch (error) {
+		if (error instanceof Error) {
+			Logger.logError(error.message);
+		}
 	}
-	// remove project instance from appropriate list
-	removeProjectFromAppropriateList(status, id);
-	// close more info modal
-	closeMoreInfoModalButtonClickHandler(closeHandler, deleteHandler);
 }
 
 // listeners

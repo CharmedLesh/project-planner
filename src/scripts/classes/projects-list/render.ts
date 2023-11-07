@@ -1,3 +1,5 @@
+import { Logger } from '../common/logger';
+
 type ID = string;
 
 export class Render {
@@ -28,33 +30,34 @@ export class Render {
 
 	renderProject = ($project: HTMLLIElement | null): void => {
 		try {
-			if (this.$projectsList) {
-				if ($project) {
-					this.$projectsList.append($project);
-					this.$projectsList.scrollTo(0, this.$projectsList.scrollHeight);
-				} else {
-					throw new Error('Project element not provided.');
-				}
-			} else {
+			if (!this.$projectsList) {
 				throw new Error('Project list element not provided.');
 			}
+			if (!$project) {
+				throw new Error('Project element not provided.');
+			}
+			this.$projectsList.append($project);
+			this.$projectsList.scrollTo(0, this.$projectsList.scrollHeight);
 		} catch (error) {
-			console.error(error);
+			if (error instanceof Error) {
+				Logger.logError(error.message);
+			}
 		}
 	};
 
 	renderProjectList = (multipleProjectsElements: HTMLLIElement[]): void => {
 		try {
-			if (this.$projectsList) {
-				for (const $project of multipleProjectsElements) {
-					this.renderProject($project);
-				}
-				this.$projectsList.scrollTo(0, 0);
-			} else {
+			if (!this.$projectsList) {
 				throw new Error('Project list element not provided.');
 			}
+			for (const $project of multipleProjectsElements) {
+				this.renderProject($project);
+			}
+			this.$projectsList.scrollTo(0, 0);
 		} catch (error) {
-			console.error(error);
+			if (error instanceof Error) {
+				Logger.logError(error.message);
+			}
 		}
 	};
 
@@ -63,7 +66,9 @@ export class Render {
 			const $project = this.$projectsList?.querySelector(`[data-id="${id}"]`) as HTMLLIElement;
 			$project.remove();
 		} catch (error) {
-			console.error(error);
+			if (error instanceof Error) {
+				Logger.logError(error.message);
+			}
 		}
 	};
 }
