@@ -66,12 +66,12 @@ const addNewProject = (projectData: IProject): void => {
 	}
 };
 
-const removeProjectFromAppropriateList = (newStatus: 'active' | 'finished', id: ID) => {
-	if (newStatus === 'active') {
-		finishedProjectsList.removeProjectById(id);
-	}
-	if (newStatus === 'finished') {
+const removeProjectFromAppropriateList = (status: 'active' | 'finished', id: ID) => {
+	if (status === 'active') {
 		activeProjectsList.removeProjectById(id);
+	}
+	if (status === 'finished') {
+		finishedProjectsList.removeProjectById(id);
 	}
 };
 
@@ -135,7 +135,7 @@ const actionButtonClickHandler = ($target: HTMLButtonElement): void => {
 				// set updated projects to localstorage
 				localStorage.set(projects);
 				// remove project from appropriate list
-				removeProjectFromAppropriateList(project.status, id);
+				removeProjectFromAppropriateList(project.status === 'active' ? 'finished' : 'active', id);
 				// add project to appropriate list
 				addProjectToAppropriateList(project);
 			}
@@ -158,11 +158,16 @@ const moreInfoClickHandler = ($target: HTMLButtonElement): void => {
 			if (project) {
 				if ($moreInfoModal && $moreInfoModalTitle && $moreInfoModalDescription && $moreInfoModalInfo) {
 					// fill modal with project data
+					$moreInfoModal.setAttribute('data-id', project.id);
 					$moreInfoModalTitle.innerText = project.title;
 					$moreInfoModalDescription.innerText = project.description;
 					$moreInfoModalInfo.innerText = project.info;
 					// apply event listeners to buttons inside modal
-					$moreInfoModalCloseButton?.addEventListener('click', closeMoreInfoModalClickHandler);
+					const closeHandler = () => closeMoreInfoModalButtonClickHandler(closeHandler, deleteHandler);
+					const deleteHandler = () =>
+						deleteProjectButtonClickHandler(id, status, closeHandler, deleteHandler);
+					$moreInfoModalCloseButton?.addEventListener('click', closeHandler);
+					$moreInfoModalDeleteButton?.addEventListener('click', deleteHandler);
 					// show more info modal filled with new data
 					$moreInfoModal.style.display = 'flex';
 				} else {
@@ -179,12 +184,35 @@ const moreInfoClickHandler = ($target: HTMLButtonElement): void => {
 	}
 };
 
-const closeMoreInfoModalClickHandler = (): void => {
+function closeMoreInfoModalButtonClickHandler(closeHandler: () => void, deleteHandler: () => void): void {
+	console.log('close handler');
 	if ($moreInfoModal) {
 		$moreInfoModal.style.display = 'none';
-		$moreInfoModalCloseButton?.removeEventListener('click', closeMoreInfoModalClickHandler);
+		$moreInfoModalCloseButton?.removeEventListener('click', closeHandler);
+		$moreInfoModalDeleteButton?.removeEventListener('click', deleteHandler);
 	}
-};
+}
+
+function deleteProjectButtonClickHandler(
+	id: ID,
+	status: 'active' | 'finished',
+	closeHandler: () => void,
+	deleteHandler: () => void
+): void {
+	console.log('remove handler');
+	// update localstorage
+	const projects: IProject[] | null = localStorage.get();
+	if (projects) {
+		const newProjects = projects.filter(project => project.id !== id);
+		localStorage.set(newProjects);
+	} else {
+		console.error('PROJECTS not found.');
+	}
+	// remove project instance from appropriate list
+	removeProjectFromAppropriateList(status, id);
+	// close more info modal
+	closeMoreInfoModalButtonClickHandler(closeHandler, deleteHandler);
+}
 
 // listeners
 document.addEventListener('click', (e: any) => {
