@@ -31,6 +31,7 @@ export class Render {
 			if (this.$projectsList) {
 				if ($project) {
 					this.$projectsList.append($project);
+					this.$projectsList.scrollTo(0, this.$projectsList.scrollHeight);
 				} else {
 					throw new Error('Project element not provided.');
 				}
@@ -48,6 +49,7 @@ export class Render {
 				for (const $project of multipleProjectsElements) {
 					this.renderProject($project);
 				}
+				this.$projectsList.scrollTo(0, 0);
 			} else {
 				throw new Error('Project list element not provided.');
 			}

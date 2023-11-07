@@ -75,7 +75,6 @@ export class ProjectsList {
 		// remove project from instances array
 		const indexToRemove: number = this.projectsInstancesArray.findIndex(project => project.id === id);
 		this.projectsInstancesArray.splice(indexToRemove, 1);
-		console.log(this.projectsInstancesArray);
 		// unrender project
 		this.render.unrenderProjectById(id);
 	};
