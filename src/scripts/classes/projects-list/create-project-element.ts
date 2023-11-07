@@ -2,16 +2,11 @@ import { IProject } from '../../interfaces/interfaces';
 import { Project } from './project';
 
 export class CreateProjectElement {
-	projectData: IProject | Project;
-	constructor({ projectData }: { projectData: IProject | Project }) {
-		this.projectData = projectData;
-	}
-
-	createProjectElement = (): HTMLLIElement => {
-		const projectActionButtonInnerText = this.projectData.status === 'active' ? 'Finish' : 'Activate';
-		const $project = this.createLi('js-project', this.projectData.id);
-		const $projectTitle = this.createH2('js-project__title', undefined, this.projectData.title);
-		const $projectDescription = this.createP('js-project__description', undefined, this.projectData.description);
+	createProjectElement = (project: IProject | Project): HTMLLIElement => {
+		const projectActionButtonInnerText = project.status === 'active' ? 'Finish' : 'Activate';
+		const $project = this.createLi('js-project', project.id);
+		const $projectTitle = this.createH2('js-project__title', undefined, project.title);
+		const $projectDescription = this.createP('js-project__description', undefined, project.description);
 		const $projectButtonsContainer = this.createDiv('js-project__buttons-container', undefined, undefined);
 		const $projectMoreInfoButton = this.createButton(
 			['js-project__more-info-button', 'outlined-red-button'],
@@ -30,6 +25,18 @@ export class CreateProjectElement {
 		$project.append($projectTitle, $projectDescription, $projectButtonsContainer);
 
 		return $project;
+	};
+
+	createProjectsElementsArray = (projects: IProject[] | Project[]): HTMLLIElement[] | null => {
+		if (projects.length) {
+			let projectslementsArray: HTMLLIElement[] = [];
+			for (const project of projects) {
+				const $project = this.createProjectElement(project);
+				projectslementsArray.push($project);
+			}
+			return projectslementsArray;
+		}
+		return null;
 	};
 
 	private createLi(classNameOrClassNamesArray?: string | string[], dataId?: string): HTMLLIElement {

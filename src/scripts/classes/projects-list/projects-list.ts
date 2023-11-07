@@ -1,33 +1,34 @@
 import { Project } from './project';
 import { Render } from './render';
 import { CreateProjectElement } from './create-project-element';
-import { LocalStorage } from '../common/local-storage';
 import { IProject } from '../../interfaces/interfaces';
 
+type ID = string;
+
 export class ProjectsList {
-	localStorage: LocalStorage<IProject[]>;
+	status: 'active' | 'finished';
+	createProjectElement: CreateProjectElement;
 	render: Render;
 	projectsInstancesArray: Project[];
 
-	constructor({ status, key }: { status: 'active' | 'finished'; key: string }) {
-		this.localStorage = new LocalStorage<IProject[]>({ key });
+	constructor({
+		status,
+		projectsFromLocalStorage
+	}: {
+		status: 'active' | 'finished';
+		projectsFromLocalStorage: IProject[] | null;
+	}) {
+		this.status = status;
+		this.projectsInstancesArray = this.initProjectsInstancesArray(projectsFromLocalStorage);
+		this.createProjectElement = new CreateProjectElement();
 		this.render = new Render({ status: status });
-		this.projectsInstancesArray = this.initProjectsInstancesArray(status);
-		this.init();
+		this.invokeRerender();
 	}
 
-	private init = () => {
-		const projectsListElementsArray = this.createProjectsListElementsArray();
-		if (projectsListElementsArray) {
-			this.render.renderProjectList(projectsListElementsArray);
-		}
-	};
-
-	private initProjectsInstancesArray = (status: 'active' | 'finished'): Project[] => {
-		const projectsFromLocalStorage: IProject[] | null = this.localStorage.get();
-		if (projectsFromLocalStorage) {
+	private initProjectsInstancesArray = (projectsFromLocalStorage: IProject[] | null): Project[] => {
+		if (projectsFromLocalStorage && projectsFromLocalStorage.length) {
 			const projectsFromLocalStorageFilteredByStatus: IProject[] = projectsFromLocalStorage.filter(
-				project => project.status === status
+				project => project.status === this.status
 			);
 			if (projectsFromLocalStorageFilteredByStatus.length) {
 				let projectsInstancesArray: Project[] = [];
@@ -43,40 +44,39 @@ export class ProjectsList {
 				}
 				return projectsInstancesArray;
 			}
+			return [];
 		}
 		return [];
 	};
 
-	private createProjectsListElementsArray = (): HTMLLIElement[] | null => {
-		if (this.projectsInstancesArray.length) {
-			let projectsListElementsArray: HTMLLIElement[] = [];
-			for (const project of this.projectsInstancesArray) {
-				const createProjectElement = new CreateProjectElement({ projectData: project });
-				const $project = createProjectElement.createProjectElement();
-				projectsListElementsArray.push($project);
-			}
-			return projectsListElementsArray;
-		}
-		return null;
-	};
-
-	private addNewProjectToLocalStorage = (newProject: Project) => {
-		const projects: IProject[] | null = this.localStorage.get();
-		if (projects) {
-			projects.push(newProject);
-			this.localStorage.set(projects);
-		} else {
-			this.localStorage.set([newProject]);
+	private invokeRerender = () => {
+		const projectsListElementsArray = this.createProjectElement.createProjectsElementsArray(
+			this.projectsInstancesArray
+		);
+		if (projectsListElementsArray) {
+			this.render.renderProjectList(projectsListElementsArray);
 		}
 	};
 
 	addNewProject = (projectData: IProject) => {
 		const newProject: Project = new Project({
+			id: projectData.id,
 			status: projectData.status,
 			title: projectData.title,
 			description: projectData.description,
 			info: projectData.info
 		});
-		this.addNewProjectToLocalStorage(newProject);
+		this.projectsInstancesArray.push(newProject);
+		const $project = this.createProjectElement.createProjectElement(newProject);
+		this.render.renderProject($project);
+	};
+
+	removeProjectById = (id: ID) => {
+		// remove project from instances array
+		const indexToRemove: number = this.projectsInstancesArray.findIndex(project => project.id === id);
+		this.projectsInstancesArray.splice(indexToRemove, 1);
+		console.log(this.projectsInstancesArray);
+		// unrender project
+		this.render.unrenderProjectById(id);
 	};
 }

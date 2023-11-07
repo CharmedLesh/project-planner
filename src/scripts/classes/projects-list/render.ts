@@ -1,3 +1,5 @@
+type ID = string;
+
 export class Render {
 	$projectsList: HTMLUListElement | null;
 
@@ -5,7 +7,7 @@ export class Render {
 		this.$projectsList = this.initProjectListElement(status);
 	}
 
-	private initProjectListElement = (status: 'active' | 'finished') => {
+	private initProjectListElement = (status: 'active' | 'finished'): HTMLUListElement | null => {
 		const $activeProjects = document.getElementById('active-projects') as HTMLDivElement | null;
 		const $finishedProjects = document.getElementById('finished-projects') as HTMLDivElement | null;
 		switch (status) {
@@ -24,7 +26,7 @@ export class Render {
 		}
 	};
 
-	renderProject = ($project: HTMLLIElement | null) => {
+	renderProject = ($project: HTMLLIElement | null): void => {
 		try {
 			if (this.$projectsList) {
 				if ($project) {
@@ -40,7 +42,7 @@ export class Render {
 		}
 	};
 
-	renderProjectList = (multipleProjectsElements: HTMLLIElement[]) => {
+	renderProjectList = (multipleProjectsElements: HTMLLIElement[]): void => {
 		try {
 			if (this.$projectsList) {
 				for (const $project of multipleProjectsElements) {
@@ -49,6 +51,15 @@ export class Render {
 			} else {
 				throw new Error('Project list element not provided.');
 			}
+		} catch (error) {
+			console.error(error);
+		}
+	};
+
+	unrenderProjectById = (id: ID): void => {
+		try {
+			const $project = this.$projectsList?.querySelector(`[data-id="${id}"]`) as HTMLLIElement;
+			$project.remove();
 		} catch (error) {
 			console.error(error);
 		}
