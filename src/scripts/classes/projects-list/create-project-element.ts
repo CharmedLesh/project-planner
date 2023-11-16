@@ -2,8 +2,14 @@ import { IProject } from '../../interfaces/interfaces';
 import { Project } from './project';
 
 export class CreateProjectElement {
+	status: 'active' | 'finished';
+
+	constructor({ status }: { status: 'active' | 'finished' }) {
+		this.status = status;
+	}
+
 	createProjectElement = (project: IProject | Project): HTMLLIElement => {
-		const projectActionButtonInnerText = project.status === 'active' ? 'Finish' : 'Activate';
+		const projectActionButtonInnerText = this.status === 'active' ? 'Finish' : 'Activate';
 		const $project = this.createLi('js-project', project.id);
 		const $projectTitle = this.createH2('js-project__title', undefined, project.title);
 		const $projectDescription = this.createP('js-project__description', undefined, project.description);

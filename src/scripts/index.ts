@@ -1,5 +1,4 @@
 import { v4 as uuidv4 } from 'uuid';
-import { LocalStorage } from './classes/common/local-storage';
 import { ProjectsList } from './classes/projects-list/projects-list';
 import { IProject } from './interfaces/interfaces';
 import { Project } from './classes/projects-list/project';
@@ -7,18 +6,17 @@ import { Logger } from './classes/common/logger';
 
 type ID = string;
 
-const key: string = 'PROJECTS';
-const localStorage = new LocalStorage<IProject[]>({ key: key });
-const initialProjectsFromLocalStorage: IProject[] | null = localStorage.get();
+const activeProjectsKey: string = 'ACTIVE_PROJECTS';
+const finishedProjectsKey: string = 'FINISHED_PROJECTS';
 
-// projects lists
+// projects lists[]
 const activeProjectsList: ProjectsList = new ProjectsList({
 	status: 'active',
-	projectsFromLocalStorage: initialProjectsFromLocalStorage
+	key: activeProjectsKey
 });
 const finishedProjectsList: ProjectsList = new ProjectsList({
 	status: 'finished',
-	projectsFromLocalStorage: initialProjectsFromLocalStorage
+	key: finishedProjectsKey
 });
 
 // elements
@@ -52,36 +50,41 @@ const $moreInfoModalCloseButton = $moreInfoModal?.querySelector(
 ) as HTMLButtonElement | null;
 
 // helpers
-const addNewProject = (projectData: IProject): void => {
-	switch (projectData.status) {
-		case 'active':
-			localStorage.add(projectData);
-			activeProjectsList.addNewProject(projectData);
-			break;
-		case 'finished':
-			localStorage.add(projectData);
-			finishedProjectsList.addNewProject(projectData);
-			break;
-		default:
-			Logger.logError('Status argument error.');
-	}
-};
-
-const removeProjectFromAppropriateList = (status: 'active' | 'finished', id: ID) => {
-	if (status === 'active') {
-		activeProjectsList.removeProjectById(id);
-	}
-	if (status === 'finished') {
-		finishedProjectsList.removeProjectById(id);
-	}
-};
-
-const addProjectToAppropriateList = (project: IProject) => {
-	if (project.status === 'active') {
-		activeProjectsList.addNewProject(project);
-	}
-	if (project.status === 'finished') {
-		finishedProjectsList.addNewProject(project);
+// get project + remove from list + create new project in oposite list
+const takeActionOnProject = (status: string, id: ID): void => {
+	try {
+		switch (status) {
+			case 'active':
+			case 'active-projects':
+				// get project
+				const activeProject: Project | null = activeProjectsList.getProjectById(id);
+				if (!activeProject) {
+					throw new Error('Project not found.');
+				}
+				// remove project from active projects list
+				activeProjectsList.removeProjectById(id);
+				// add project to finished projects list
+				finishedProjectsList.addNewProject(activeProject);
+				break;
+			case 'finished':
+			case 'finished-projects':
+				// get project
+				const finishedProject: Project | null = finishedProjectsList.getProjectById(id);
+				if (!finishedProject) {
+					throw new Error('Project not found.');
+				}
+				// remove project from finished projects list
+				finishedProjectsList.removeProjectById(id);
+				// add project to active projects list
+				activeProjectsList.addNewProject(finishedProject);
+				break;
+			default:
+				throw new Error('Unable to determine project list status. Check project list id.');
+		}
+	} catch (error) {
+		if (error instanceof Error) {
+			Logger.logError(error.message);
+		}
 	}
 };
 
@@ -122,14 +125,19 @@ const newProjectModalSubmitFormHandler = (event: SubmitEvent): void => {
 	const $target = event.target as HTMLFormElement;
 	const formData = new FormData($target);
 	const formValues = Object.fromEntries(formData);
+	const status = formValues.status as 'active' | 'finished';
 	const projectData: IProject = {
 		id: uuidv4(),
-		status: formValues.status as 'active' | 'finished',
 		title: formValues.title as string,
 		description: formValues.description as string,
 		info: formValues.info as string
 	};
-	addNewProject(projectData);
+	if (status === 'active') {
+		activeProjectsList.addNewProject(projectData);
+	}
+	if (status === 'finished') {
+		finishedProjectsList.addNewProject(projectData);
+	}
 	cancelNewProjectModalButtonClickHandler();
 };
 
@@ -144,25 +152,17 @@ const actionButtonClickHandler = ($target: HTMLButtonElement): void => {
 		if (!id) {
 			throw new Error('data-id attribute not found.');
 		}
-		// get projects from localstorage
-		const projects: IProject[] | null = localStorage.get();
-		if (!projects) {
-			throw new Error('Projects not found in localstorage.');
+		// get project list id
+		const $projectList: HTMLDivElement | null = $project.closest('.projects-list');
+		if (!$projectList) {
+			throw new Error('Project list element not found.');
 		}
-		// update projects
-		const indexToMove = projects.findIndex(project => project.id === id);
-		if (indexToMove === -1) {
-			throw new Error(`Project with id ${id} not found in localstorage.`);
+		const projectListId: string | null = $projectList.id;
+		if (!projectListId) {
+			throw new Error('Project list id not found.');
 		}
-		const [project] = projects.splice(indexToMove, 1);
-		project.status = project.status === 'active' ? 'finished' : 'active';
-		projects.push(project);
-		// set updated projects to localstorage
-		localStorage.set(projects);
-		// remove project from appropriate list
-		removeProjectFromAppropriateList(project.status === 'active' ? 'finished' : 'active', id);
-		// add project to appropriate list
-		addProjectToAppropriateList(project);
+		// get project + remove from previous list + create new project in oposite list
+		takeActionOnProject(projectListId, id);
 	} catch (error) {
 		if (error instanceof Error) {
 			Logger.logError(error.message);
@@ -183,7 +183,17 @@ const moreInfoClickHandler = ($target: HTMLButtonElement): void => {
 		}
 		// get project status
 		const $projectList: HTMLDivElement | null = $project.closest('.projects-list');
-		const status: 'active' | 'finished' = $projectList?.id === 'active-projects' ? 'active' : 'finished';
+		if (!$projectList) {
+			throw new Error('Project list element not found.');
+		}
+		const projectListId: string | null = $projectList.id;
+		if (!projectListId) {
+			throw new Error('Project list id not found.');
+		}
+		if (projectListId !== 'active-projects' && projectListId !== 'finished-projects') {
+			throw new Error('Project list id error.');
+		}
+		const status: 'active' | 'finished' = projectListId === 'active-projects' ? 'active' : 'finished';
 		// get project data from appropriate list
 		const project: Project | null =
 			status === 'active' ? activeProjectsList.getProjectById(id) : finishedProjectsList.getProjectById(id);
@@ -234,15 +244,17 @@ function deleteProjectButtonClickHandler(
 	deleteHandler: () => void
 ): void {
 	try {
-		const projects: IProject[] | null = localStorage.get();
-		if (!projects) {
-			throw new Error('Projects not found in localstorage.');
+		// invoke delete method in appropriate list
+		switch (status) {
+			case 'active':
+				activeProjectsList.removeProjectById(id);
+				break;
+			case 'finished':
+				finishedProjectsList.removeProjectById(id);
+				break;
+			default:
+				throw new Error('Status parameter error.');
 		}
-		// update localstorage
-		const newProjects = projects.filter(project => project.id !== id);
-		localStorage.set(newProjects);
-		// remove project instance from appropriate list
-		removeProjectFromAppropriateList(status, id);
 		// close more info modal
 		closeMoreInfoModalButtonClickHandler(closeHandler, deleteHandler);
 	} catch (error) {

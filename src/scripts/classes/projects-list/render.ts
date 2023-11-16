@@ -10,15 +10,15 @@ export class Render {
 	}
 
 	private initProjectListElement = (status: 'active' | 'finished'): HTMLUListElement | null => {
-		const $activeProjects = document.getElementById('active-projects') as HTMLDivElement | null;
-		const $finishedProjects = document.getElementById('finished-projects') as HTMLDivElement | null;
 		switch (status) {
 			case 'active':
+				const $activeProjects = document.getElementById('active-projects') as HTMLDivElement | null;
 				const $activeProjectsListElement = $activeProjects?.querySelector(
 					'.projects-list__content'
 				) as HTMLUListElement | null;
 				return $activeProjectsListElement;
 			case 'finished':
+				const $finishedProjects = document.getElementById('finished-projects') as HTMLDivElement | null;
 				const $finishedProjectsListElement = $finishedProjects?.querySelector(
 					'.projects-list__content'
 				) as HTMLUListElement | null;
