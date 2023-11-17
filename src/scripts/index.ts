@@ -32,6 +32,12 @@ const $addFinishedProjectButton = $finishedProjects?.querySelector(
 // modal
 const $modal = document.getElementById('modal') as HTMLDivElement | null;
 const $modalNewProjectForm = $modal?.querySelector('.new-project-form') as HTMLFormElement | null;
+const $modalNewProjectActiveRadio = $modal?.querySelector(
+	'#new-project-form__project-type-radio--active'
+) as HTMLInputElement | null;
+const $modalNewProjectFinishedRadio = $modal?.querySelector(
+	'#new-project-form__project-type-radio--finished'
+) as HTMLInputElement | null;
 const $modalCancelNewProjectButton = $modalNewProjectForm?.querySelector(
 	'.new-project-form__cancel-button'
 ) as HTMLButtonElement | null;
@@ -45,25 +51,6 @@ const $modalMoreInfoDeleteButton = $modalMoreInfo?.querySelector(
 	'.more-info__delete-button'
 ) as HTMLButtonElement | null;
 const $modalMoreInfoCloseButton = $modalMoreInfo?.querySelector('.more-info__close-button') as HTMLButtonElement | null;
-// add new project modal
-// const $newProjectModal = document.getElementById('new-project-modal') as HTMLDivElement | null;
-// const $cancelNewProjectModalButton = $newProjectModal?.querySelector(
-// 	'.new-project-modal__cancel-button'
-// ) as HTMLButtonElement | null;
-// const $newProjectModalForm = $newProjectModal?.querySelector('.new-project-modal__form') as HTMLFormElement | null;
-// more info modal
-// const $moreInfoModal = document.getElementById('more-info-modal') as HTMLDivElement | null;
-// const $moreInfoModalTitle = $moreInfoModal?.querySelector('.more-info-modal__title') as HTMLParagraphElement | null;
-// const $moreInfoModalDescription = $moreInfoModal?.querySelector(
-// 	'.more-info-modal__description'
-// ) as HTMLParagraphElement | null;
-// const $moreInfoModalInfo = $moreInfoModal?.querySelector('.more-info-modal__info') as HTMLParagraphElement | null;
-// const $moreInfoModalDeleteButton = $moreInfoModal?.querySelector(
-// 	'.more-info-modal__delete-button'
-// ) as HTMLButtonElement | null;
-// const $moreInfoModalCloseButton = $moreInfoModal?.querySelector(
-// 	'.more-info-modal__close-button'
-// ) as HTMLButtonElement | null;
 
 // helpers
 // get project + remove from list + create new project in oposite list
@@ -105,10 +92,16 @@ const takeActionOnProject = (status: string, id: ID): void => {
 };
 
 // open new project modal
-const openNewProjectModal = () => {
+const openNewProjectModal = (status: 'active' | 'finished') => {
 	try {
-		if (!$modal || !$modalNewProjectForm) {
+		if (!$modal || !$modalNewProjectForm || !$modalNewProjectActiveRadio || !$modalNewProjectFinishedRadio) {
 			throw new Error('Modal element not found');
+		}
+		if (status === 'active') {
+			$modalNewProjectActiveRadio.checked = true;
+		}
+		if (status === 'finished') {
+			$modalNewProjectFinishedRadio.checked = true;
 		}
 		$modal.style.display = 'flex';
 		$modalNewProjectForm.style.display = 'block';
@@ -316,9 +309,14 @@ document.addEventListener('click', (e: any) => {
 	const $target = e.target;
 
 	if ($target) {
-		// target is add new project button
-		if ($target === $addActiveProjectButton || $target === $addFinishedProjectButton) {
-			openNewProjectModal();
+		// target is add new active project button
+		if ($target === $addActiveProjectButton) {
+			openNewProjectModal('active');
+		}
+
+		// target is add new finished project button
+		if ($target === $addFinishedProjectButton) {
+			openNewProjectModal('finished');
 		}
 
 		//target is action button
