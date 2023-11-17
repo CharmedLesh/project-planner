@@ -32,12 +32,8 @@ const $addFinishedProjectButton = $finishedProjects?.querySelector(
 // modal
 const $modal = document.getElementById('modal') as HTMLDivElement | null;
 const $modalNewProjectForm = $modal?.querySelector('.new-project-form') as HTMLFormElement | null;
-const $modalNewProjectActiveRadio = $modal?.querySelector(
-	'#new-project-form__project-type-radio--active'
-) as HTMLInputElement | null;
-const $modalNewProjectFinishedRadio = $modal?.querySelector(
-	'#new-project-form__project-type-radio--finished'
-) as HTMLInputElement | null;
+const $modalNewProjectActiveRadio = $modal?.querySelector('#radio-option-active') as HTMLInputElement | null;
+const $modalNewProjectFinishedRadio = $modal?.querySelector('#radio-option-finished') as HTMLInputElement | null;
 const $modalCancelNewProjectButton = $modalNewProjectForm?.querySelector(
 	'.new-project-form__cancel-button'
 ) as HTMLButtonElement | null;
@@ -93,6 +89,7 @@ const takeActionOnProject = (status: string, id: ID): void => {
 
 // open new project modal
 const openNewProjectModal = (status: 'active' | 'finished') => {
+	console.log(status);
 	try {
 		if (!$modal || !$modalNewProjectForm || !$modalNewProjectActiveRadio || !$modalNewProjectFinishedRadio) {
 			throw new Error('Modal element not found');
@@ -101,6 +98,8 @@ const openNewProjectModal = (status: 'active' | 'finished') => {
 			$modalNewProjectActiveRadio.checked = true;
 		}
 		if (status === 'finished') {
+			console.log('check finished radio triggered');
+			console.log($modalNewProjectFinishedRadio);
 			$modalNewProjectFinishedRadio.checked = true;
 		}
 		$modal.style.display = 'flex';
