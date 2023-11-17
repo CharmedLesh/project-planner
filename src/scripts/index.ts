@@ -29,25 +29,41 @@ const $finishedProjects = document.getElementById('finished-projects') as HTMLDi
 const $addFinishedProjectButton = $finishedProjects?.querySelector(
 	'.projects-list__add-button'
 ) as HTMLButtonElement | null;
-// add new project modal
-const $newProjectModal = document.getElementById('new-project-modal') as HTMLDivElement | null;
-const $cancelNewProjectModalButton = $newProjectModal?.querySelector(
-	'.new-project-modal__cancel-button'
+// modal
+const $modal = document.getElementById('modal') as HTMLDivElement | null;
+const $modalNewProjectForm = $modal?.querySelector('.new-project-form') as HTMLFormElement | null;
+const $modalCancelNewProjectButton = $modalNewProjectForm?.querySelector(
+	'.new-project-form__cancel-button'
 ) as HTMLButtonElement | null;
-const $newProjectModalForm = $newProjectModal?.querySelector('.new-project-modal__form') as HTMLFormElement | null;
-// more info modal
-const $moreInfoModal = document.getElementById('more-info-modal') as HTMLDivElement | null;
-const $moreInfoModalTitle = $moreInfoModal?.querySelector('.more-info-modal__title') as HTMLParagraphElement | null;
-const $moreInfoModalDescription = $moreInfoModal?.querySelector(
-	'.more-info-modal__description'
+const $modalMoreInfo = $modal?.querySelector('.more-info') as HTMLDivElement | null;
+const $modalMoreInfoTitle = $modalMoreInfo?.querySelector('.more-info__title') as HTMLParagraphElement | null;
+const $modalMoreInfoDescription = $modalMoreInfo?.querySelector(
+	'.more-info__description'
 ) as HTMLParagraphElement | null;
-const $moreInfoModalInfo = $moreInfoModal?.querySelector('.more-info-modal__info') as HTMLParagraphElement | null;
-const $moreInfoModalDeleteButton = $moreInfoModal?.querySelector(
-	'.more-info-modal__delete-button'
+const $modalMoreInfoInfo = $modalMoreInfo?.querySelector('.more-info__info') as HTMLParagraphElement | null;
+const $modalMoreInfoDeleteButton = $modalMoreInfo?.querySelector(
+	'.more-info__delete-button'
 ) as HTMLButtonElement | null;
-const $moreInfoModalCloseButton = $moreInfoModal?.querySelector(
-	'.more-info-modal__close-button'
-) as HTMLButtonElement | null;
+const $modalMoreInfoCloseButton = $modalMoreInfo?.querySelector('.more-info__close-button') as HTMLButtonElement | null;
+// add new project modal
+// const $newProjectModal = document.getElementById('new-project-modal') as HTMLDivElement | null;
+// const $cancelNewProjectModalButton = $newProjectModal?.querySelector(
+// 	'.new-project-modal__cancel-button'
+// ) as HTMLButtonElement | null;
+// const $newProjectModalForm = $newProjectModal?.querySelector('.new-project-modal__form') as HTMLFormElement | null;
+// more info modal
+// const $moreInfoModal = document.getElementById('more-info-modal') as HTMLDivElement | null;
+// const $moreInfoModalTitle = $moreInfoModal?.querySelector('.more-info-modal__title') as HTMLParagraphElement | null;
+// const $moreInfoModalDescription = $moreInfoModal?.querySelector(
+// 	'.more-info-modal__description'
+// ) as HTMLParagraphElement | null;
+// const $moreInfoModalInfo = $moreInfoModal?.querySelector('.more-info-modal__info') as HTMLParagraphElement | null;
+// const $moreInfoModalDeleteButton = $moreInfoModal?.querySelector(
+// 	'.more-info-modal__delete-button'
+// ) as HTMLButtonElement | null;
+// const $moreInfoModalCloseButton = $moreInfoModal?.querySelector(
+// 	'.more-info-modal__close-button'
+// ) as HTMLButtonElement | null;
 
 // helpers
 // get project + remove from list + create new project in oposite list
@@ -88,38 +104,67 @@ const takeActionOnProject = (status: string, id: ID): void => {
 	}
 };
 
+// open new project modal
+const openNewProjectModal = () => {
+	try {
+		if (!$modal || !$modalNewProjectForm) {
+			throw new Error('Modal element not found');
+		}
+		$modal.style.display = 'flex';
+		$modalNewProjectForm.style.display = 'block';
+	} catch (error) {
+		if (error instanceof Error) {
+			Logger.logError(error.message);
+		}
+	}
+};
+
+// close new project modal
+const closeNewProjectModal = () => {
+	try {
+		if (!$modal || !$modalNewProjectForm) {
+			throw new Error('Modal element not found');
+		}
+		$modal.style.display = 'none';
+		$modalNewProjectForm.style.display = 'none';
+		$modalNewProjectForm.reset();
+	} catch (error) {
+		if (error instanceof Error) {
+			Logger.logError(error.message);
+		}
+	}
+};
+
+// open more info modal
+const openMoreInfoModal = () => {
+	try {
+		if (!$modal || !$modalMoreInfo) {
+			throw new Error('Modal element not found');
+		}
+		$modal.style.display = 'flex';
+		$modalMoreInfo.style.display = 'block';
+	} catch (error) {
+		if (error instanceof Error) {
+			Logger.logError(error.message);
+		}
+	}
+};
+
+const closeMoreInfoModal = () => {
+	try {
+		if (!$modal || !$modalMoreInfo) {
+			throw new Error('Modal element not found.');
+		}
+		$modal.style.display = 'none';
+		$modalMoreInfo.style.display = 'none';
+	} catch (error) {
+		if (error instanceof Error) {
+			Logger.logError(error.message);
+		}
+	}
+};
+
 // handlers
-const addNewProjectButtonClickHandler = (): void => {
-	try {
-		if (!$newProjectModal) {
-			throw new Error('new-project-modal element not found');
-		}
-		$cancelNewProjectModalButton?.addEventListener('click', cancelNewProjectModalButtonClickHandler);
-		$newProjectModalForm?.addEventListener('submit', newProjectModalSubmitFormHandler);
-		$newProjectModal.style.display = 'flex';
-	} catch (error) {
-		if (error instanceof Error) {
-			Logger.logError(error.message);
-		}
-	}
-};
-
-const cancelNewProjectModalButtonClickHandler = (): void => {
-	try {
-		if (!$newProjectModal) {
-			throw new Error('new-project-modal element not found');
-		}
-		$newProjectModal.style.display = 'none';
-		$cancelNewProjectModalButton?.removeEventListener('click', cancelNewProjectModalButtonClickHandler);
-		$newProjectModalForm?.removeEventListener('submit', newProjectModalSubmitFormHandler);
-		$newProjectModalForm?.reset();
-	} catch (error) {
-		if (error instanceof Error) {
-			Logger.logError(error.message);
-		}
-	}
-};
-
 const newProjectModalSubmitFormHandler = (event: SubmitEvent): void => {
 	event.preventDefault();
 	const $target = event.target as HTMLFormElement;
@@ -138,7 +183,7 @@ const newProjectModalSubmitFormHandler = (event: SubmitEvent): void => {
 	if (status === 'finished') {
 		finishedProjectsList.addNewProject(projectData);
 	}
-	cancelNewProjectModalButtonClickHandler();
+	closeNewProjectModal();
 };
 
 const actionButtonClickHandler = ($target: HTMLButtonElement): void => {
@@ -200,21 +245,21 @@ const moreInfoClickHandler = ($target: HTMLButtonElement): void => {
 		if (!project) {
 			throw new Error(`Project instance for id ${id} not found.`);
 		}
-		if (!$moreInfoModal || !$moreInfoModalTitle || !$moreInfoModalDescription || !$moreInfoModalInfo) {
+		if (!$modalMoreInfo || !$modalMoreInfoTitle || !$modalMoreInfoDescription || !$modalMoreInfoInfo) {
 			throw new Error('Modal element not found.');
 		}
 		// fill modal with project data
-		$moreInfoModal.setAttribute('data-id', project.id);
-		$moreInfoModalTitle.innerText = project.title;
-		$moreInfoModalDescription.innerText = project.description;
-		$moreInfoModalInfo.innerText = project.info;
+		$modalMoreInfo.setAttribute('data-id', project.id);
+		$modalMoreInfoTitle.innerText = project.title;
+		$modalMoreInfoDescription.innerText = project.description;
+		$modalMoreInfoInfo.innerText = project.info;
 		// apply event listeners to buttons inside modal
 		const closeHandler = () => closeMoreInfoModalButtonClickHandler(closeHandler, deleteHandler);
 		const deleteHandler = () => deleteProjectButtonClickHandler(id, status, closeHandler, deleteHandler);
-		$moreInfoModalCloseButton?.addEventListener('click', closeHandler);
-		$moreInfoModalDeleteButton?.addEventListener('click', deleteHandler);
+		$modalMoreInfoCloseButton?.addEventListener('click', closeHandler);
+		$modalMoreInfoDeleteButton?.addEventListener('click', deleteHandler);
 		// show more info modal filled with new data
-		$moreInfoModal.style.display = 'flex';
+		openMoreInfoModal();
 	} catch (error) {
 		if (error instanceof Error) {
 			Logger.logError(error.message);
@@ -224,12 +269,9 @@ const moreInfoClickHandler = ($target: HTMLButtonElement): void => {
 
 function closeMoreInfoModalButtonClickHandler(closeHandler: () => void, deleteHandler: () => void): void {
 	try {
-		if (!$moreInfoModal) {
-			throw new Error('more-info-modal element not found.');
-		}
-		$moreInfoModal.style.display = 'none';
-		$moreInfoModalCloseButton?.removeEventListener('click', closeHandler);
-		$moreInfoModalDeleteButton?.removeEventListener('click', deleteHandler);
+		closeMoreInfoModal();
+		$modalMoreInfoCloseButton?.removeEventListener('click', closeHandler);
+		$modalMoreInfoDeleteButton?.removeEventListener('click', deleteHandler);
 	} catch (error) {
 		if (error instanceof Error) {
 			Logger.logError(error.message);
@@ -265,13 +307,18 @@ function deleteProjectButtonClickHandler(
 }
 
 // listeners
+window.addEventListener('load', () => {
+	$modalCancelNewProjectButton?.addEventListener('click', closeNewProjectModal);
+	$modalNewProjectForm?.addEventListener('submit', newProjectModalSubmitFormHandler);
+});
+
 document.addEventListener('click', (e: any) => {
 	const $target = e.target;
 
 	if ($target) {
 		// target is add new project button
 		if ($target === $addActiveProjectButton || $target === $addFinishedProjectButton) {
-			addNewProjectButtonClickHandler();
+			openNewProjectModal();
 		}
 
 		//target is action button

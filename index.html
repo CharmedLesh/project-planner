@@ -25,86 +25,83 @@
 				</div>
 				<ul class="projects-list__content"></ul>
 			</div>
-			<div class="new-project-modal" id="new-project-modal">
-				<div class="new-project-modal__background modal-background"></div>
-				<form class="new-project-modal__form modal-container">
-					<div class="new-project-modal__project-type-radio-container">
+			<div class="modal" id="modal">
+				<div class="modal__content-container">
+					<form class="new-project-form">
+						<div class="new-project-form__project-type-radio-container">
+							<input
+								type="radio"
+								class="new-project-form__project-type-radio"
+								id="new-project-form__project-type-radio--active"
+								name="status"
+								value="active"
+								checked
+							/>
+							<label for="new-project-form__project-type-radio--active">Active Project</label>
+							<input
+								type="radio"
+								class="new-project-form__project-type-radio"
+								id="new-project-form__project-type-radio--finished"
+								name="status"
+								value="finished"
+							/>
+							<label for="new-project-form__project-type-radio--finished">Finished Project</label>
+						</div>
+						<label for="new-project-form__title-input" class="new-project-form__title-lable">Title:</label>
 						<input
-							type="radio"
-							class="new-project-modal__project-type-radio"
-							id="new-project-modal__project-type-radio--active"
-							name="status"
-							value="active"
-							checked
+							name="title"
+							type="text"
+							class="new-project-form__title-input"
+							id="new-project-form__title-input"
+							placeholder="Enter project title here..."
+							spellcheck="false"
+							autocomplete="off"
+							required
 						/>
-						<label for="new-project-modal__project-type-radio--active">Active Project</label>
+						<label for="new-project-form__description-input" class="new-project-form__description-lable"
+							>Description:</label
+						>
 						<input
-							type="radio"
-							class="new-project-modal__project-type-radio"
-							id="new-project-modal__project-type-radio--finished"
-							name="status"
-							value="finished"
+							name="description"
+							type="text"
+							class="new-project-form__description-input"
+							id="new-project-form__description-input"
+							placeholder="Enter project description here..."
+							autocomplete="off"
+							required
 						/>
-						<label for="new-project-modal__project-type-radio--finished">Finished Project</label>
-					</div>
-					<label for="new-project-modal__title-input" class="new-project-modal__title-lable">Title:</label>
-					<input
-						name="title"
-						type="text"
-						class="new-project-modal__title-input"
-						id="new-project-modal__title-input"
-						placeholder="Enter project title here..."
-						spellcheck="false"
-						autocomplete="off"
-						required
-					/>
-					<label for="new-project-modal__description-input" class="new-project-modal__description-lable"
-						>Description:</label
-					>
-					<input
-						name="description"
-						type="text"
-						class="new-project-modal__description-input"
-						id="new-project-modal__description-input"
-						placeholder="Enter project description here..."
-						autocomplete="off"
-						required
-					/>
-					<label for="new-project-modal__info-textarea" class="new-project-modal__info-label"
-						>Additional info:</label
-					>
-					<textarea
-						name="info"
-						class="new-project-modal__info-textarea"
-						id="new-project-modal__info-textarea"
-						placeholder="Provide any additional info about project if you wish..."
-						cols="30"
-						rows="10"
-						autocomplete="off"
-					></textarea>
-					<div class="new-project-modal__buttons-container">
-						<button type="button" class="new-project-modal__cancel-button outlined-red-button">
-							Cancel
-						</button>
-						<button type="submit" class="new-project-modal__submit-button filled-red-button">
-							Add Project
-						</button>
-					</div>
-				</form>
-			</div>
-			<div class="more-info-modal" id="more-info-modal">
-				<div class="more-info-modal__background modal-background"></div>
-				<div class="more-info-modal__container modal-container">
-					<h2 class="more-info-modal__title"></h2>
-					<p class="more-info-modal__description"></p>
-					<p class="more-info-modal__info"></p>
-					<div class="more-info-modal__buttons-container">
-						<button class="more-info-modal__delete-button outlined-red-button">Delete Project</button>
-						<button class="more-info-modal__close-button filled-red-button">Close</button>
+						<label for="new-project-form__info-textarea" class="new-project-form__info-label"
+							>Additional info:</label
+						>
+						<textarea
+							name="info"
+							class="new-project-form__info-textarea"
+							id="new-project-form__info-textarea"
+							placeholder="Provide any additional info about project if you wish..."
+							cols="30"
+							rows="10"
+							autocomplete="off"
+						></textarea>
+						<div class="new-project-form__buttons-container">
+							<button type="button" class="new-project-form__cancel-button outlined-red-button">
+								Cancel
+							</button>
+							<button type="submit" class="new-project-form__submit-button filled-red-button">
+								Add Project
+							</button>
+						</div>
+					</form>
+					<div class="more-info">
+						<h2 class="more-info__title"></h2>
+						<p class="more-info__description"></p>
+						<p class="more-info__info"></p>
+						<div class="more-info__buttons-container">
+							<button class="more-info__delete-button outlined-red-button">Delete Project</button>
+							<button class="more-info__close-button filled-red-button">Close</button>
+						</div>
 					</div>
 				</div>
 			</div>
-		</div>
 		<script type="module" src="./src/scripts/index.ts"></script>
 		<!-- <script
 			type="module"

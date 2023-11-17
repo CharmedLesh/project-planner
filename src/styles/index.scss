@@ -3,12 +3,10 @@
 @import './common/variables.scss';
 @import './common/reset.scss';
 @import './common/modifiers/buttons.scss';
-@import './common/modifiers/modals.scss';
 //
 @import './blocks/app/app.module.scss';
 @import './blocks/projects-list/projects-list.module.scss';
-@import './blocks/new-project-modal/new-project-modal.module.scss';
-@import './blocks/more-info-modal/more-info-modal.modal.scss';
+@import './blocks/modal/modal.module.scss';
 @import './blocks/js-project/js-project.module.scss';
 
 body {
